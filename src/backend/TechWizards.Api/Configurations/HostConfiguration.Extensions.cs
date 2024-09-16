@@ -13,6 +13,7 @@ using Backbone.General.Time.Provider.Configurations;
 using Backbone.General.Validations.Abstractions.Configurations;
 using Backbone.General.Validations.FluentValidation.Configurations;
 using Backbone.Storage.Cache.InMemory.Lazy.Configurations;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel;
@@ -276,6 +277,11 @@ public static partial class HostConfiguration
     /// </summary>
     private static WebApplicationBuilder AddExposers(this WebApplicationBuilder builder)
     {
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
+        
         builder.Services.Configure<ApiBehaviorOptions>(
             options => { options.SuppressModelStateInvalidFilter = true; }
         );
