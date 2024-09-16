@@ -345,6 +345,8 @@ public static partial class HostConfiguration
     {
         app.MapControllers();
 
+        app.UseForwardedHeaders();
+
         return app;
     }
 }
