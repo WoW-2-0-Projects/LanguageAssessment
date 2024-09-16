@@ -158,12 +158,13 @@ public class GenerateGrammarAssessmentEventHandler(
 
         if (validationErrors.Any())
             throw new AppValidationException(new ValidationException(validationErrors));
-
+        
         // Save questions
         var answers = await Task.WhenAll(generatedQuestions
+            .Take((int)generationSettingsValue.NumberOfQuestions)
             .Select(async (question, index) =>
             {
-                var answers = question.Answers;
+                var answers = question.Answers.OrderBy(a => a.IsCorrect).Take((int)generationSettingsValue.NumberOfAnswers).ToList();
                 question.Answers = null!;
                 question.AssessmentId = foundAssessment.Id;
 
