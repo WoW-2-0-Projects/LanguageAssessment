@@ -1,0 +1,18 @@
+.header {
+    display: flex;
+    gap: 120px;
+    padding: 20px 40px;
+    justify-content: flex-end;
+    background: rgb(78,1,155);
+    background: linear-gradient(90deg, rgba(78,1,155,1) 36%, rgba(0,0,0,0.6293110994397759) 100%);
+}
+
+.header__auth-menu {
+    display: flex;
+    gap: 40px;
+}
+
+.header__main-menu {
+    display: flex;
+    gap: 40px;
+}

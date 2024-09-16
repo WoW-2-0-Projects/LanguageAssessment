@@ -1,0 +1,44 @@
+.control__btn {
+    color: #000;
+    margin-top: auto;
+    padding: 20px 30px;
+}
+
+.control__btn:hover { 
+    color: #000!important;
+}
+
+.control__btn:active { 
+    color: #000!important;
+}
+.control__btn:disabled { 
+    color: #fff!important;
+    background-color: grey!important;
+}
+
+.control__wrapper {
+    display: flex;
+    margin-top: auto;
+    gap: 1rem;
+}
+.control__wrapper--inner {
+    display: flex;
+    gap: 1rem;
+}
+
+.control__submit {
+    margin-left: auto;
+}
+
+.grammar-btn,
+.grammar-btn:hover,
+.grammar-btn:active {
+    background-color: #48c962!important;
+}
+
+.listening-btn,
+.listening-btn:hover,
+.listening-btn:active {
+    background-color: #3155FF!important;
+}
+

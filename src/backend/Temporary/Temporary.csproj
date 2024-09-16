@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="11.9.2" />
+        <PackageReference Include="Refit" Version="7.1.2" />
+        <PackageReference Include="WoW2.Backbone.General.Serialization.Json.Newtonsoft" Version="8.0.0-alpha.0"/>
+        <PackageReference Include="WoW2.Backbone.DataAccess.Relational.Entities" Version="8.0.0-alpha.2" />
+        <PackageReference Include="WoW2.Backbone.General.Validations.Abstractions" Version="8.0.0-alpha.3" />
+        <PackageReference Include="WoW2.Backbone.Storage.Cache.Abstractions" Version="8.0.0-alpha.7"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Options">
+        <HintPath>..\..\..\..\..\..\..\..\..\..\usr\local\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.4\Microsoft.Extensions.Options.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
