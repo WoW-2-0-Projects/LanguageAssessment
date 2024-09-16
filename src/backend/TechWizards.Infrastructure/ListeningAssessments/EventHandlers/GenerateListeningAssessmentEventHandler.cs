@@ -54,7 +54,7 @@ public class GenerateListeningAssessmentEventHandler(
             .Handle<Exception>()
             .WaitAndRetryAsync(
                 5,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                retryAttempt => TimeSpan.FromSeconds(1),
                 (exception, timeSpan, retryCount, context) =>
                 {
                     logger.LogError("Retry attempt {RetryCount} after {TimeSpanSeconds} seconds due to: {ExceptionMessage}", retryCount,

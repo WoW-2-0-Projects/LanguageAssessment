@@ -12,10 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
@@ -40,6 +36,10 @@
         <PackageReference Include="WoW2.Backbone.Comms.Infra.Mediator.MediatR.Behaviors" Version="8.0.0-alpha.2" />
         <PackageReference Include="WoW2.Backbone.Comms.Infra.Mediator.MassTransit" Version="8.0.0-alpha.6" />
         <PackageReference Include="WoW2.Backbone.Comms.Infra.EventBus.InMemory" Version="8.0.0-alpha.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>

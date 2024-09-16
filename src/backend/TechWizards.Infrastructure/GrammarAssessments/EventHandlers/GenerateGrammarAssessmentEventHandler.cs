@@ -47,7 +47,7 @@ public class GenerateGrammarAssessmentEventHandler(
             .Handle<Exception>()
             .WaitAndRetryAsync(
                 5,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                retryAttempt => TimeSpan.FromSeconds(1),
                 (exception, timeSpan, retryCount, context) =>
                 {
                     logger.LogError("Retry attempt {RetryCount} after {TimeSpanSeconds} seconds due to: {ExceptionMessage}", retryCount,
@@ -120,10 +120,11 @@ public class GenerateGrammarAssessmentEventHandler(
 
         // Validate question answers
         var isValid = generatedQuestions.TrueForAll(question =>
-            question.Answers.Count == generationSettingsValue.NumberOfAnswers &&
-            (question.Type != QuestionType.SingleChoice || question.Answers.Count(a => a.IsCorrect) == 1) &&
-            (question.Type != QuestionType.MultipleChoice || question.Answers.Count(a => a.IsCorrect) > 1)
-        );
+        {
+            var result = question.Answers.Count == generationSettingsValue.NumberOfAnswers &&
+                (question.Type != QuestionType.SingleChoice || question.Answers.Count(a => a.IsCorrect) == 1) &&
+                (question.Type != QuestionType.MultipleChoice || question.Answers.Count(a => a.IsCorrect) > 1)
+        });
 
         if (!isValid)
             throw new InvalidOperationException("Invalid question answers generated.");
