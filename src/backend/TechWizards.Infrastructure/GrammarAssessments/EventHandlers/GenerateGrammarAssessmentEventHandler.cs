@@ -76,8 +76,8 @@ public class GenerateGrammarAssessmentEventHandler(
                 - questions difficulty level - {{AssessmentLevel}}
                 - total questions number must be exactly - {{NumberOfQuestions}}
                 - total answers number must be exactly - {{NumberOfAnswers}}
-                - single-choice questions must have only all total answers that include only one correct answer
-                - multi-choice questions must have only all total answers that include more than one correct answer
+                - single-choice questions must have all total answers that include only one correct answer
+                - multi-choice questions must have all total answers that include more than one correct answer
                 - questions topics - {{Topics}}
                 - result format must be in JSON but without ticks
                 - result format must strictly follow following JSON format :
