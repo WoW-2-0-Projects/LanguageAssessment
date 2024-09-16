@@ -2,6 +2,9 @@ using Backbone.AiCapabilities.NaturalLanguageProcessing.ChatCompletion.Abstracti
 using Backbone.Comms.Infra.Abstractions.Commands;
 using Backbone.Comms.Infra.Abstractions.Events;
 using Backbone.General.Serialization.Json.Abstractions.Brokers;
+using Backbone.General.Validations.Abstractions.Exceptions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -133,33 +136,35 @@ public class GenerateListeningAssessmentEventHandler(
                 Generate questions based on given text for listening assessment with the following requirements:
             
                 ## Requirements :
-            
-                - question type must be one of - {{QuestionTypes}}
-                - difficulty level - {{AssessmentLevel}}
-                - total questions number - {{NumberOfQuestions}}
-                - total answers number - {{NumberOfAnswers}}
-                - topics - {{Topics}}
-                - result format must be in JSON but without ticks
-                - result format must strictly follow following JSON format :
+
+            - question type must be one of - {{QuestionTypes}}
+            - questions difficulty level - {{AssessmentLevel}}
+            - total questions number must be exactly - {{NumberOfQuestions}}
+            - total answers number must be exactly - {{NumberOfAnswers}}
+            - single-choice questions must have only all total answers that include only one correct answer
+            - multi-choice questions must have only all total answers that include more than one correct answer
+            - questions topics - {{Topics}}
+            - result format must be in JSON but without ticks
+            - result format must strictly follow following JSON format :
               
-                  [
-                      {
-                          "Type": "QuestionType",
-                          "QuestionText": "Question text here",
-                          "Answers": [
-                              {
-                                  "OptionText": "Option 1 text",
-                                  "IsCorrect": true
-                              },
-                              {
-                                  "OptionText": "Option 2 text",
-                                  "IsCorrect": false
-                              }
-                          ]
-                      }
-                  ]
-                  
-                  Listening assessment text - {{ListeningAudioContent}}
+            [
+                {
+                    "Type": "QuestionType",
+                    "QuestionText": "Question text here",
+                    "Answers": [
+                        {
+                            "OptionText": "Option 1 text",
+                            "IsCorrect": true
+                        },
+                        {
+                            "OptionText": "Option 2 text",
+                            "IsCorrect": false
+                        }
+                    ]
+                }
+            ]
+            
+            Listening assessment text - {{ListeningAudioContent}}
 
             """;
 
@@ -181,15 +186,41 @@ public class GenerateListeningAssessmentEventHandler(
             return jsonSerializer.Deserialize<List<QuizQuestion>>(result.Content);
         });
 
-        // Validate question answers
-        var isValid = generatedQuestions.TrueForAll(question =>
-            question.Answers.Count == generationSettingsValue.NumberOfAnswers &&
-            (question.Type != QuestionType.SingleChoice || question.Answers.Count(a => a.IsCorrect) == 1) &&
-            (question.Type != QuestionType.MultipleChoice || question.Answers.Count(a => a.IsCorrect) > 1)
-        );
+        var validationErrors = generatedQuestions
+            .SelectMany(question =>
+            {
+                var errors = new List<ValidationFailure>();
 
-        if (!isValid)
-            throw new InvalidOperationException("Invalid question answers generated.");
+                // Check if the number of answers is correct
+                if (question.Answers.Count != generationSettingsValue.NumberOfAnswers)
+                {
+                    errors.Add(new ValidationFailure(
+                        nameof(question.Answers),
+                        $"The question should have exactly {generationSettingsValue.NumberOfAnswers} answers, but it has {question.Answers.Count}."));
+                }
+
+                // Check for SingleChoice questions
+                if (question.Type == QuestionType.SingleChoice && question.Answers.Count(a => a.IsCorrect) != 1)
+                {
+                    errors.Add(new ValidationFailure(
+                        nameof(question.Answers),
+                        "SingleChoice question must have exactly one correct answer."));
+                }
+
+                // Check for MultipleChoice questions
+                if (question.Type == QuestionType.MultipleChoice && question.Answers.Count(a => a.IsCorrect) <= 1)
+                {
+                    errors.Add(new ValidationFailure(
+                        nameof(question.Answers),
+                        "MultipleChoice question must have more than one correct answer."));
+                }
+
+                return errors;
+            })
+            .ToList();
+
+        if (validationErrors.Any())
+            throw new AppValidationException(new ValidationException(validationErrors));
 
         var skipSavingChanges = new CommandOptions(skipSavingChanges: true);
 
